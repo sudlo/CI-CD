@@ -1,43 +1,66 @@
-# End-to-End DevOps Project: A GitOps CI/CD Pipeline
-[![CI Pipeline - Build and Push Docker Image](https://github.com/sudlo/CI-CD/actions/workflows/ci-pipeline.yml/badge.svg)](https://github.com/sudlo/CI-CD/actions/workflows/ci-pipeline.yml)
+<div align="center">
 
-This project demonstrates a fully automated CI/CD pipeline for a simple Python web application using modern DevOps tools. The entire workflow is built on the principles of GitOps, where Git is the single source of truth for both application code and infrastructure configuration.
+# 🎨 End-to-End DevOps Project: A GitOps CI/CD Pipeline
 
-![DevOps Workflow Diagram](./assets/workflow-diagram.jpg)
+**A fully automated CI/CD pipeline for a Python application using Docker, Kubernetes, GitHub Actions, and ArgoCD.**
+
+</div>
+
+<div align="center">
+
+[![CI Pipeline Status](https://github.com/sudlo/CI-CD/actions/workflows/ci-pipeline.yml/badge.svg)](https://github.com/sudlo/CI-CD/actions/workflows/ci-pipeline.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+</div>
+
+### ## 🛠️ Tech Stack
+
+<div align="center">
+  <a href="https://www.python.org" target="_blank" rel="noreferrer">
+    <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
+  </a>
+  <a href="https://flask.palletsprojects.com/" target="_blank" rel="noreferrer">
+    <img src="https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white" alt="Flask">
+  </a>
+  <a href="https://www.docker.com/" target="_blank" rel="noreferrer">
+    <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker">
+  </a>
+  <a href="https://kubernetes.io" target="_blank" rel="noreferrer">
+    <img src="https://img.shields.io/badge/Kubernetes-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white" alt="Kubernetes">
+  </a>
+  <a href="https://argo-cd.readthedocs.io/" target="_blank" rel="noreferrer">
+    <img src="https://img.shields.io/badge/Argo%20CD-EF7B4D?style=for-the-badge&logo=argo&logoColor=white" alt="Argo CD">
+  </a>
+</div>
+
 ---
 
 ### ## 🚀 Workflow Overview
 
 This diagram illustrates the complete CI/CD pipeline from code commit to deployment:
 
-1. **CI (Continuous Integration)**: A push to the `main` branch triggers a **GitHub Actions** workflow. It builds the application into a **Docker** image and pushes it to a container registry (Docker Hub).
-2. **CD (Continuous Deployment)**: **ArgoCD** is continuously monitoring the Git repository. When it detects a change in the Kubernetes manifests (e.g., a new image tag), it automatically syncs the changes to the **Kubernetes** cluster, triggering a rolling update of the application.
+![DevOps Workflow Diagram](./assets/workflow-diagram.jpg)
 
----
-
-### ## 🛠️ Technologies Used
-
-* **Version Control**: Git & GitHub
-* **CI Automation**: GitHub Actions
-* **Containerization**: Docker
-* **Container Orchestration**: Kubernetes (Minikube)
-* **CD & GitOps**: ArgoCD
+1.  **CI (Continuous Integration)**: A push to the `main` branch triggers a **GitHub Actions** workflow. It builds the application into a **Docker** image and pushes it to Docker Hub.
+2.  **CD (Continuous Deployment)**: **ArgoCD** monitors the Git repository. When it detects a change in the Kubernetes manifests, it automatically syncs the changes to the **Kubernetes** cluster.
 
 ---
 
 ### ## 📂 Project Structure
 
-```
+```bash
 .
 ├── .github/
 │   └── workflows/
-│       └── ci-pipeline.yml    # CI workflow for building Docker images
+│       └── ci-pipeline.yml
 ├── k8s/
-│   ├── deployment.yaml        # K8s deployment manifest
-│   └── service.yaml           # K8s service manifest
-├── app.py                     # Simple Python Flask application
-├── Dockerfile                 # Instructions to build the Docker image
-└── requirements.txt           # Python dependencies
+│   ├── deployment.yaml
+│   └── service.yaml
+├── assets/
+│   └── workflow-diagram.jpg
+├── app.py
+├── Dockerfile
+└── requirements.txt
 ```
 
 ---
@@ -46,24 +69,9 @@ This diagram illustrates the complete CI/CD pipeline from code commit to deploym
 
 To run this project, you'll need a Kubernetes cluster and the following tools installed: `git`, `docker`, `kubectl`.
 
-1. **Fork & Clone the Repository**:
-
-    ```bash
-    git clone [https://github.com/YOUR_USERNAME/devops-demo-project.git](https://github.com/YOUR_USERNAME/devops-demo-project.git)
-    cd devops-demo-project
-    ```
-
-2. **Set Up Secrets**: In your forked GitHub repository, go to `Settings > Secrets and variables > Actions` and add your Docker Hub credentials:
-    * `DOCKERHUB_USERNAME`: Your Docker Hub username.
-    * `DOCKERHUB_TOKEN`: Your Docker Hub access token.
-
-3. **Deploy ArgoCD**: Install ArgoCD on your Kubernetes cluster.
-
-    ```bash
-    kubectl create namespace argocd
-    kubectl apply -n argocd -f [https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml](https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml)
-    ```
-
-4. **Connect ArgoCD to Your Repo**: Configure an ArgoCD application to point to the `k8s` directory in your forked repository.
+1.  **Fork & Clone the Repository**.
+2.  **Set Up GitHub Secrets**: `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN`.
+3.  **Deploy ArgoCD** to your Kubernetes cluster.
+4.  **Connect ArgoCD** to your forked repository.
 
 Now, any change you make to the app code or manifests will automatically be built and deployed!
