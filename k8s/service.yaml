@@ -1,0 +1,16 @@
+# k8s/service.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ci-cd-service
+spec:
+  selector:
+    app: ci-cd
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  # Use NodePort for local testing with Docker Desktop/Minikube
+  # Use LoadBalancer for cloud environments
+  type: NodePort

@@ -1,0 +1,23 @@
+# k8s/deployment.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ci-cd-app
+spec:
+  replicas: 2 # Run 2 instances of our app
+  selector:
+    matchLabels:
+      app: ci-cd
+  template:
+    metadata:
+      labels:
+        app: ci-cd
+    spec:
+      containers:
+      - name: web
+        # IMPORTANT: This is a placeholder. The pipeline will update this.
+        # For the first manual deploy, you would replace this with a real image tag.
+        image: YOUR_DOCKERHUB_USERNAME/ci-cd:latest
+        ports:
+        - containerPort: 80
