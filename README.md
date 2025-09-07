@@ -1,4 +1,5 @@
 # End-to-End DevOps Project: A GitOps CI/CD Pipeline
+[![CI Pipeline - Build and Push Docker Image](https://github.com/sudlo/CI-CD/actions/workflows/ci-pipeline.yml/badge.svg)](https://github.com/sudlo/CI-CD/actions/workflows/ci-pipeline.yml)
 
 This project demonstrates a fully automated CI/CD pipeline for a simple Python web application using modern DevOps tools. The entire workflow is built on the principles of GitOps, where Git is the single source of truth for both application code and infrastructure configuration.
 
