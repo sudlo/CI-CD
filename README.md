@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🎨 End-to-End DevOps Project: A Complete A-to-Z Guide
+# 🎨 End-to-End DevOps Project: A Complete A-to-Z Guide ✨
 
 **This repository contains a complete, step-by-step tutorial for building a fully automated CI/CD pipeline using Docker, Kubernetes, GitHub Actions, and Argo Rollouts.**
 
@@ -47,7 +47,7 @@ This is the automated pipeline we are going to build.
 
 ---
 
-## ## Phase 1: ☁️ Setting Up The Environment
+## ## Phase 1: ☁️ Setting Up The Environment ✨
 
 We'll start by preparing a cloud server on Azure with all the tools we need.
 
@@ -59,7 +59,7 @@ We'll start by preparing a cloud server on Azure with all the tools we need.
     * **Administrator account**: Create a username and password.
     * **Inbound port rules**: Allow **`RDP (3389)`**.
 3.  Create the VM and connect to it using Remote Desktop. 
-
+    
 #### **1.2 Configure the Server**
 Inside your new VM, we need to prepare the operating system.
 1.  Open **Server Manager** (it opens on startup) > **Local Server**.
@@ -105,7 +105,7 @@ Inside your new VM, we need to prepare the operating system.
 
 ---
 
-## ## Phase 2: 📝 Project & Code Setup
+## ## Phase 2: 📝 Project & Code Setup ✨
 
 Now let's create our application files and push them to this GitHub repository.
 
@@ -150,7 +150,7 @@ Now let's create our application files and push them to this GitHub repository.
 
 ---
 
-## ## Phase 3: 🤖 The CI Pipeline (GitHub Actions)
+## ## Phase 3: 🤖 The CI Pipeline (GitHub Actions) ✨
 
 Next, we'll set up the automation to build our Docker image.
 
@@ -200,7 +200,7 @@ Commit and push the new workflow file. Go to the **"Actions"** tab in GitHub to 
 
 ---
 
-## ## Phase 4: 🛰️ The CD Pipeline (ArgoCD & Argo Rollouts)
+## ## Phase 4: 🛰️ The CD Pipeline (ArgoCD & Argo Rollouts) ✨
 
 Now we set up automatic, advanced deployments to Kubernetes.
 
@@ -290,7 +290,7 @@ Click **`CREATE`**. ArgoCD will now automatically deploy your application using 
 
 ---
 
-## ## Phase 5: 🎉 Go Bonkers! Build & Destroy!
+## ## Phase 5: 🎉 Go Bonkers! Build & Destroy! ✨
 
 It's time for the grand finale! Let's see that powerful pipeline in action, from a simple code change to a full-blown Canary deployment.
 
@@ -320,4 +320,4 @@ It's time for the grand finale! Let's see that powerful pipeline in action, from
 
 ---
 
-### ## 💥 You Did It! Go Bonkers! Build & Destroy!
+### ## 💥 You Did It! Go Bonkers! Build & Destroy! ✨
