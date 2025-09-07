@@ -2,7 +2,7 @@
 
 # 🎨 End-to-End DevOps Project: A Complete A-to-Z Guide
 
-**This repository contains a complete, step-by-step tutorial for building a fully automated CI/CD pipeline using Docker, Kubernetes, GitHub Actions, and ArgoCD.**
+**This repository contains a complete, step-by-step tutorial for building a fully automated CI/CD pipeline using Docker, Kubernetes, GitHub Actions, and Argo Rollouts.**
 
 </div>
 
@@ -58,9 +58,7 @@ We'll start by preparing a cloud server on Azure with all the tools we need.
     * **Size**: A size that supports nested virtualization, like **`Standard_D4s_v3`**. This is critical.
     * **Administrator account**: Create a username and password.
     * **Inbound port rules**: Allow **`RDP (3389)`**.
-3.  Create the VM and connect to it using Remote Desktop.
-
-[Image of the Azure VM creation settings]
+3.  Create the VM and connect to it using Remote Desktop. 
 
 #### **1.2 Configure the Server**
 Inside your new VM, we need to prepare the operating system.
@@ -159,12 +157,10 @@ Next, we'll set up the automation to build our Docker image.
 #### **3.1 Get Docker Hub Credentials**
 Our pipeline needs to log in to Docker Hub. For that, we need a Personal Access Token (PAT).
 1.  Log in to **Docker Hub**.
-2.  Click your **Username > Account Settings > Security**.
+2.  Click your **Username > Account Settings > Personal access tokens**.
 3.  Click **"New Access Token"**.
 4.  Give it a name (e.g., `github-actions-token`) and set permissions to **"Read, Write, Delete"**.
-5.  Click **"Generate"** and **COPY the token immediately**. You will not see it again.
-
-[Image of Docker Hub's Personal Access Tokens page]
+5.  Click **"Generate"** and **COPY the token immediately**. You will not see it again. 
 
 #### **3.2 Set GitHub Secrets**
 We need to securely store the Docker Hub credentials in GitHub.
@@ -204,20 +200,20 @@ Commit and push the new workflow file. Go to the **"Actions"** tab in GitHub to 
 
 ---
 
-## ## Phase 4: 🛰️ The CD Pipeline (ArgoCD)
+## ## Phase 4: 🛰️ The CD Pipeline (ArgoCD & Argo Rollouts)
 
-Now we set up automatic deployment to Kubernetes.
+Now we set up automatic, advanced deployments to Kubernetes.
 
 #### **4.1 Create Kubernetes Manifests**
 Create the folder `k8s/` and add these two files:
-* **`deployment.yaml`**:
+* **`deployment.yaml`** (This will be an Argo Rollouts object):
     ```yaml
-    apiVersion: apps/v1
-    kind: Deployment
+    apiVersion: argoproj.io/v1alpha1
+    kind: Rollout
     metadata:
       name: ci-cd-app
     spec:
-      replicas: 2
+      replicas: 4
       selector:
         matchLabels:
           app: ci-cd
@@ -231,6 +227,13 @@ Create the folder `k8s/` and add these two files:
             image: sudlo/ci-cd:latest # Placeholder image
             ports:
             - containerPort: 80
+      strategy:
+        canary:
+          steps:
+          - setWeight: 25
+          - pause: { duration: 1m }
+          - setWeight: 75
+          - pause: { duration: 1m }
     ```
 * **`service.yaml`**:
     ```yaml
@@ -249,14 +252,19 @@ Create the folder `k8s/` and add these two files:
     ```
 Commit and push these files.
 
-#### **4.2 Install ArgoCD**
-In your VM's PowerShell terminal, install ArgoCD to your Kubernetes cluster:
+#### **4.2 Install Argo CD & Argo Rollouts**
+In your VM's PowerShell terminal, install both Argo controllers to your Kubernetes cluster:
 ```powershell
+# Install Argo CD
 kubectl create namespace argocd
 kubectl apply -n argocd -f [https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml](https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml)
+
+# Install Argo Rollouts
+kubectl create namespace argo-rollouts
+kubectl apply -n argo-rollouts -f [https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml](https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml)
 ```
 
-#### **4.3 Access the ArgoCD UI**
+#### **4.3 Access the Argo CD UI**
 1.  **Open a new, separate terminal** and run this port-forward command. Keep it running.
     ```powershell
     kubectl port-forward svc/argocd-server -n argocd 8080:443
@@ -268,7 +276,7 @@ kubectl apply -n argocd -f [https://raw.githubusercontent.com/argoproj/argo-cd/s
 3.  Open a browser in your VM to `https://localhost:8080`. Log in with username `admin` and the password you just retrieved.
 
 #### **4.4 Connect Your Application**
-This is the final setup step! In the ArgoCD UI, click **`+ NEW APP`** and fill in the details:
+In the Argo CD UI, click **`+ NEW APP`** and fill in the details:
 * **Application Name**: `ci-cd-app`
 * **Project Name**: `default`
 * **Sync Policy**: `Automatic`, and check the boxes for `Prune Resources` and `Self Heal`.
@@ -278,20 +286,38 @@ This is the final setup step! In the ArgoCD UI, click **`+ NEW APP`** and fill i
 * **Cluster URL**: `https://kubernetes.default.svc`
 * **Namespace**: `default`
 
-Click **`CREATE`**. ArgoCD will now automatically deploy your application!
+Click **`CREATE`**. ArgoCD will now automatically deploy your application using the initial `Rollout` manifest.
 
 ---
 
-## ## Phase 5: 🎉 See It All Work!
+## ## Phase 5: 🎉 Go Bonkers! Build & Destroy!
 
-Let's test the complete, end-to-end flow.
+It's time for the grand finale! Let's see that powerful pipeline in action, from a simple code change to a full-blown Canary deployment.
 
-1.  **Make a Code Change**: In VS Code, edit `app.py` to change the message.
-2.  **Push the Change**:
+1.  **Make a Code Change**: In VS Code, edit your `app.py` file. Maybe add an emoji, change the greeting, or even break something on purpose to test the `SELF HEAL` feature!
+2.  **Push the Code**: Save your changes, then in your terminal:
     ```bash
     git add .
-    git commit -m "feat: Update application greeting"
+    git commit -m "feat: Go bonkers with a new app version!"
     git push
     ```
-3.  **Watch CI**: Go to the **"Actions"** tab on GitHub. A new pipeline will run, building and pushing a new Docker image with a new tag (the commit SHA). Copy this new tag.
-4.  **Update the Manifest**: In `k8s/deployment.yaml`, update the `image` line with the new tag you just copied:
+3.  **Watch CI (GitHub Actions)**: Head over to the **"Actions"** tab on GitHub. Your CI pipeline will roar to life, building a fresh Docker image with a brand new, unique tag (the commit SHA). Make sure to **copy this new image tag** once the build is green.
+4.  **Update the Manifest (GitOps Magic)**: In `k8s/deployment.yaml`, update the `image` line with the new tag you just copied:
+    ```yaml
+    image: sudlo/ci-cd:PASTE_THE_NEW_TAG_HERE
+    ```
+5.  **Push the Manifest Change**: This is the GitOps trigger!
+    ```bash
+    git add .
+    git commit -m "chore: Initiating glorious canary deployment!"
+    git push
+    ```
+6.  **Watch CD (ArgoCD & Argo Rollouts)**: Open the ArgoCD UI. You'll see your application go `OutOfSync` as it detects the change. Then, Argo Rollouts will take over, initiating your carefully crafted Canary deployment strategy. To witness every step of the traffic shift and pod creation in real-time, keep this terminal command running:
+    ```bash
+    kubectl argo rollouts get rollout ci-cd-app --watch
+    ```
+7.  **Verify & Celebrate**: Once the rollout is `Healthy` and `Synced`, run `minikube service ci-cd-service` in your terminal. A browser will pop open, displaying your latest, greatest (or perhaps intentionally broken for testing!) application version.
+
+---
+
+### ## 💥 You Did It! Go Bonkers! Build & Destroy!
